@@ -100,7 +100,7 @@ body { background:#0a0a0f; font-family:'Press Start 2P',monospace; display:flex;
 </style>
 </head>
 <body>
-<div id="gc">
+<div id="game-wrap"><div id="gc">
   <div id="sf"></div>
   <div id="bgcity"></div>
   <div id="floor"></div>
@@ -163,7 +163,9 @@ body { background:#0a0a0f; font-family:'Press Start 2P',monospace; display:flex;
     <h2 id="ew"></h2>
     <button class="btn" onclick="location.reload()">PLAY AGAIN</button>
   </div>
-</div>
+</div></div>
+
+<div id="gc-spacer"></div>
 
 <script>
 const SL=40,SR=696,FW=64,MHP=100,MEN=100,RT=60;
@@ -502,12 +504,20 @@ createTouchUI();
 .sup-btn{border-color:#ffff00;box-shadow:0 0 6px #ffff0066;font-size:7px;}
 .sup-btn:active{background:#ffff00;color:#000;}
 @media(max-width:820px){
+  body{justify-content:flex-start;padding-top:0;align-items:flex-start;}
+  #game-wrap{width:100vw;overflow:hidden;}
+  #gc{
+    transform-origin:top left;
+    transform:scaleX(calc(100vw / 800)) scaleY(calc(100vw / 800));
+    width:800px!important;
+    height:480px!important;
+    border-left:none;border-right:none;
+  }
+  #gc-spacer{height:calc(100vw * 0.6);}
   .ovl h1{font-size:11px!important;}
   .ovl h2{font-size:8px!important;}
   .ovl p{font-size:5px!important;}
   .btn{font-size:7px!important;padding:10px 14px!important;}
-  body{justify-content:flex-start;padding-top:8px;}
-  #gc{width:100vw;height:56vw;min-height:180px;border-left:none;border-right:none;}
   #touch-ctrl{display:flex!important;}
   #ctrl{display:none;}
 }
