@@ -190,17 +190,17 @@ body{background:#0a0a0f;font-family:'Press Start 2P',monospace;display:flex;flex
     <div class="pb sl"></div><div class="pb sr"></div>
   </div>
 
-  <div id="ctrl">Q/E=MOVE &nbsp; SPACE=JUMP &nbsp; A=JAB &nbsp; S=BOOM &nbsp; D=BARRAGE &nbsp; F=SOUND WAVE &nbsp; W=BLOCK &nbsp; W+S=SUPER &nbsp; JUMP+A/S=AERIAL</div>
+  <div id="ctrl">A/D=MOVE &nbsp; W=JUMP &nbsp; S=BLOCK &nbsp; J=JAB &nbsp; K=BOOM &nbsp; U=BARRAGE &nbsp; I=SOUND WAVE &nbsp; L=SUPER &nbsp; JUMP+J/K=AERIAL</div>
 
   <div class="ovl" id="ss" onclick="startGame()">
     <h1>🎤 BEATBOXER<br>VS<br>🤺 FENCER</h1>
     <h2>BEST OF 3 ROUNDS</h2>
-    <p>Q / E = Move &nbsp;|&nbsp; SPACE = Jump</p>
-    <p>A = Hi-Hat Jab &nbsp;|&nbsp; S = 808 Boom</p>
-    <p>D = Beatbox Barrage (5 shots, 25 energy)</p>
-    <p class="sec">F = SOUND WAVE (big ring shot, 30 energy)</p>
-    <p>W = Block &nbsp;|&nbsp; W+S = FREESTYLE BREAK SUPER</p>
-    <p class="sec">JUMP + A = Aerial Jab &nbsp;|&nbsp; JUMP + S = Bass Drop</p>
+    <p>A / D = Move &nbsp;|&nbsp; W = Jump &nbsp;|&nbsp; S = Block</p>
+    <p>J = Hi-Hat Jab &nbsp;|&nbsp; K = 808 Boom</p>
+    <p>U = Beatbox Barrage (5 shots, 25 energy)</p>
+    <p class="sec">I = SOUND WAVE (big ring shot, 30 energy)</p>
+    <p>L = FREESTYLE BREAK SUPER (full energy)</p>
+    <p class="sec">JUMP + J = Aerial Jab &nbsp;|&nbsp; JUMP + K = Bass Drop</p>
     <button class="btn">FIGHT!</button>
   </div>
   <div class="ovl" id="ks" style="display:none">
@@ -437,7 +437,7 @@ function atk1(t){
     super:{n:'FREESTYLE BREAK',d:42,ec:100,cd:80,fs:true,c:'#ffffff'},
   }[t];
   if(!M) return;
-  if(M.ec&&G.p1.en<M.ec) return;
+  if(M.ec&&G.p1.en<M.ec) return; // super needs full energy
   if(M.ec) G.p1.en-=M.ec;
   G.p1.cd=M.cd;
   p1e.classList.add(t==='light'?'atk':t==='heavy'?'atk2':'atk');
@@ -565,17 +565,18 @@ document.addEventListener('keydown',e=>{
   const k=e.key.toLowerCase();
   G.keys[k]=true;
   if(!G.running) return;
-  if(k===' '||k==='arrowup'){jump(G.p1,p1e);}
-  else if(k==='a') atk1('light');
-  else if(k==='s'){ if(G.keys['w']) atk1('super'); else atk1('heavy'); }
-  else if(k==='d') atk1('special');
-  else if(k==='f') atk1('wave');
-  else if(k==='w'){G.p1.blk=true;p1e.classList.add('blk');}
+  if(k==='w'){jump(G.p1,p1e);}
+  else if(k==='j') atk1('light');
+  else if(k==='k') atk1('heavy');
+  else if(k==='u') atk1('special');
+  else if(k==='i') atk1('wave');
+  else if(k==='l') atk1('super');
+  else if(k==='s'){G.p1.blk=true;p1e.classList.add('blk');}
   e.preventDefault();
 });
 document.addEventListener('keyup',e=>{
   G.keys[e.key.toLowerCase()]=false;
-  if(e.key.toLowerCase()==='w'){G.p1.blk=false;p1e.classList.remove('blk');}
+  if(e.key.toLowerCase()==='s'){G.p1.blk=false;p1e.classList.remove('blk');}
 });
 
 // ============================================================
@@ -588,8 +589,8 @@ function loop(ts){
 
   // P1 movement
   const spd=G.p1.onGround?3.5:3;
-  if(G.keys['q']) G.p1.x=cl(G.p1.x-spd,SL,G.p2.x-76);
-  if(G.keys['e']) G.p1.x=cl(G.p1.x+spd,SL,G.p2.x-76);
+  if(G.keys['a']) G.p1.x=cl(G.p1.x-spd,SL,G.p2.x-76);
+  if(G.keys['d']) G.p1.x=cl(G.p1.x+spd,SL,G.p2.x-76);
   if(G.p1.cd>0) G.p1.cd-=dt*60;
 
   physics(dt);
@@ -684,8 +685,8 @@ function bindBtn(id, onDown, onUp){
 }
 
 bindBtn('tc-jump',()=>{ if(G.running) jump(G.p1,p1e); });
-bindBtn('tc-q',()=>{ G.keys['q']=true; },()=>{ G.keys['q']=false; });
-bindBtn('tc-e',()=>{ G.keys['e']=true; },()=>{ G.keys['e']=false; });
+bindBtn('tc-q',()=>{ G.keys['a']=true; },()=>{ G.keys['a']=false; });
+bindBtn('tc-e',()=>{ G.keys['d']=true; },()=>{ G.keys['d']=false; });
 bindBtn('tc-a',()=>{ if(G.running) atk1('light'); });
 bindBtn('tc-s',()=>{ if(G.running) atk1('heavy'); });
 bindBtn('tc-d',()=>{ if(G.running) atk1('special'); });
