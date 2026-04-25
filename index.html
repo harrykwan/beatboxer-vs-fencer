@@ -139,7 +139,7 @@ body { background:#0a0a0f; font-family:'Press Start 2P',monospace; display:flex;
 
   <div id="ctrl">Q/E=MOVE &nbsp; A=HI-HAT JAB &nbsp; S=808 BOOM &nbsp; D=BEATBOX BARRAGE &nbsp; W=BLOCK &nbsp; W+S=FREESTYLE BREAK (SUPER)</div>
 
-  <div class="ovl" id="ss">
+  <div class="ovl" id="ss" onclick="startGame()">
     <h1>🎤 BEATBOXER<br>VS<br>🤺 FENCER</h1>
     <h2>BEST OF 3 ROUNDS</h2>
     <p>Q/E = Move Left/Right</p>
@@ -148,7 +148,7 @@ body { background:#0a0a0f; font-family:'Press Start 2P',monospace; display:flex;
     <p>D = Beatbox Barrage (5 projectiles, costs 25 energy)</p>
     <p>W = Rhythm Shield (block)</p>
     <p style="color:#ffff00;margin-top:10px">W + S = FREESTYLE BREAK SUPER (100 energy)</p>
-    <button class="btn" onclick="startGame()">FIGHT!</button>
+    <button class="btn" onclick="startGame()">FIGHT!</button><p style="margin-top:10px;color:#555;font-size:5px">or tap anywhere on screen</p>
   </div>
 
   <div class="ovl" id="ks" style="display:none">
@@ -502,6 +502,10 @@ createTouchUI();
 .sup-btn{border-color:#ffff00;box-shadow:0 0 6px #ffff0066;font-size:7px;}
 .sup-btn:active{background:#ffff00;color:#000;}
 @media(max-width:820px){
+  .ovl h1{font-size:11px!important;}
+  .ovl h2{font-size:8px!important;}
+  .ovl p{font-size:5px!important;}
+  .btn{font-size:7px!important;padding:10px 14px!important;}
   body{justify-content:flex-start;padding-top:8px;}
   #gc{width:100vw;height:56vw;min-height:180px;border-left:none;border-right:none;}
   #touch-ctrl{display:flex!important;}
