@@ -310,7 +310,7 @@ function ai(dt){
   }
   if(G.p2.cd>0){G.p2.cd-=dt*60;return;}
   switch(G.ais){
-    case 'approach': G.p2.x=cl(G.p2.x-2.5,SL,SR); G.p2.blk=false; break;
+    case 'approach': if(dist>100) G.p2.x=cl(G.p2.x-2,SL,SR); G.p2.blk=false; break;
     case 'retreat': G.p2.x=cl(G.p2.x+2,SL,SR); G.p2.blk=false; break;
     case 'light': G.p2.blk=false; atk2('light'); break;
     case 'heavy': G.p2.blk=false; atk2('heavy'); break;
@@ -320,7 +320,7 @@ function ai(dt){
       G.p2.blk=true; p2e.classList.add('blk');
       setTimeout(()=>{G.p2.blk=false;p2e.classList.remove('blk');},500); break;
   }
-  if(G.p2.x<G.p1.x+65) G.p2.x=cl(G.p1.x+68,SL,SR);
+  G.p2.x=cl(G.p2.x,G.p1.x+72,SR); G.p1.x=cl(G.p1.x,SL,G.p2.x-72);
 }
 
 // INPUT
@@ -476,6 +476,29 @@ function createTouchUI(){
 }
 createTouchUI();
 
+// Dynamic scaling for mobile
+function scaleGame(){
+  const wrap = document.getElementById('game-wrap') || document.body;
+  const gc = document.getElementById('gc');
+  const spacer = document.getElementById('gc-spacer');
+  const avail = Math.min(window.innerWidth, 800);
+  if(avail < 800){
+    const scale = avail / 800;
+    gc.style.transformOrigin = 'top left';
+    gc.style.transform = 'scale('+scale+')';
+    gc.style.width = '800px';
+    gc.style.height = '480px';
+    if(spacer) spacer.style.height = (480*scale)+'px';
+    wrap.style.height = (480*scale)+'px';
+  } else {
+    gc.style.transform = '';
+    if(spacer) spacer.style.height = '0';
+  }
+}
+scaleGame();
+window.addEventListener('resize', scaleGame);
+
+
 </script>
 
 <style>
@@ -506,14 +529,6 @@ createTouchUI();
 @media(max-width:820px){
   body{justify-content:flex-start;padding-top:0;align-items:flex-start;}
   #game-wrap{width:100vw;overflow:hidden;}
-  #gc{
-    transform-origin:top left;
-    transform:scaleX(calc(100vw / 800)) scaleY(calc(100vw / 800));
-    width:800px!important;
-    height:480px!important;
-    border-left:none;border-right:none;
-  }
-  #gc-spacer{height:calc(100vw * 0.6);}
   .ovl h1{font-size:11px!important;}
   .ovl h2{font-size:8px!important;}
   .ovl p{font-size:5px!important;}
