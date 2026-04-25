@@ -394,7 +394,7 @@ function dealDamage(atk, def, del, dmg, moveName, kb=0, color='#ff00ff'){
   const is2 = def===G.p2;
 
   // BLOCK CHECK — must be standing and facing the attacker
-  const facingAtk = is2 ? (def.x > atk.x) : (def.x < atk.x);
+  const facingAtk = true; // always allow block since facing is auto-managed
   if(def.state==='BLOCK' && def.blk && facingAtk){
     // Fencer riposte
     if(is2 && Math.random()<0.4){
@@ -466,8 +466,8 @@ function spawnBullet(fromP2=false){
   const p=fromP2?G.p2:G.p1, op=fromP2?G.p1:G.p2;
   const el=document.createElement('div');
   el.className='proj pb-bullet';
-  let x=fromP2?p.x-14:p.x+FW, y=p.y+46+Math.random()*14;
-  const dx=fromP2?-13:13;
+  const bDir=fromP2?p.facing*-1:p.facing; let x=bDir>0?p.x+FW:p.x-14, y=p.y+46+Math.random()*14;
+  const dx=bDir*13;
   el.style.cssText=`top:${y}px;left:${x}px`;
   gc.appendChild(el);
   const id=setInterval(()=>{
@@ -485,11 +485,11 @@ function spawnSonicWave(){
   mvTxt(p.x, p.y+20, '★ SONIC WAVE', '#ff00ff');
   const el=document.createElement('div');
   el.className='proj sw-ring';
-  let x=p.x+FW, y=p.y+28, size=22, hit=false;
+  const swDir=p.facing; let x=swDir>0?p.x+FW:p.x-22, y=p.y+28, size=22, hit=false;
   el.style.cssText=`top:${y}px;left:${x}px;width:${size}px;height:${size}px;`;
   gc.appendChild(el);
   const id=setInterval(()=>{
-    x+=9; size=Math.min(size+2.5,60);
+    x+=9*swDir; size=Math.min(size+2.5,60);
     const yOff=(size-22)/2;
     el.style.left=x+'px'; el.style.top=(y-yOff)+'px';
     el.style.width=size+'px'; el.style.height=size+'px';
@@ -504,12 +504,12 @@ function spawnBladeThrow(){
   const p=G.p2, op=G.p1;
   const el=document.createElement('div');
   el.className='proj blade-proj';
-  let x=p.x-26, y=p.y+32;
+  const bDir2=p.facing; let x=bDir2>0?p.x-26:p.x+FW+4, y=p.y+32;
   el.style.cssText=`top:${y}px;left:${x}px`;
   gc.appendChild(el);
   const id=setInterval(()=>{
-    x-=12; el.style.left=x+'px';
-    if(x<op.x+FW&&x>op.x-20&&y>op.y&&y<op.y+FH){
+    x-=12*bDir2; el.style.left=x+'px';
+    if(Math.abs(x-op.x)<FW&&y>op.y&&y<op.y+FH){
       dealDamage(p,op,p1e,12,'BLADE THROW',0,'#ccccff'); el.remove(); clearInterval(id);
     }
     if(x<-60){el.remove();clearInterval(id);}
@@ -592,8 +592,8 @@ function p1Attack(type){
   if(M.bassDrop){
     mvTxt(G.p1.x, G.p1.y+10, 'BASS DROP!', '#ff4400');
     // hit on contact immediately if close enough
-    const dist=G.p2.x-G.p1.x;
-    if(dist>0&&dist<M.rng) dealDamage(G.p1,G.p2,p2e,M.d,null,0,M.c);
+    const dist=Math.abs(G.p2.x-G.p1.x);
+    if(dist<M.rng) dealDamage(G.p1,G.p2,p2e,M.d,null,0,M.c);
     // land shockwave
     const lc=setInterval(()=>{
       if(G.p1.state!=='JUMP'){
@@ -606,8 +606,8 @@ function p1Attack(type){
   }
 
   // Melee
-  const dist=G.p2.x-G.p1.x;
-  if(dist>0&&dist<M.rng+(inAir?30:0)){
+  const dist=Math.abs(G.p2.x-G.p1.x);
+  if(dist<M.rng+(inAir?30:0)){
     dealDamage(G.p1,G.p2,p2e,M.d,M.n,M.kb,M.c);
     G.p1.en=Math.min(MEN,G.p1.en+8);
   }
@@ -633,8 +633,8 @@ function p2Attack(type){
   p2e.classList.add('atk'); setTimeout(()=>p2e.classList.remove('atk','atk-heavy'),220);
   if(M.dash){flash('#ffff00');ann('OLYMPIC FURY!!');dealDamage(G.p2,G.p1,p1e,M.d,M.n,0,M.c);return;}
   if(M.proj){spawnBladeThrow();return;}
-  const dist=G.p2.x-G.p1.x;
-  if(dist>0&&dist<M.rng+(inAir?30:0)){
+  const dist=Math.abs(G.p2.x-G.p1.x);
+  if(dist<M.rng+(inAir?30:0)){
     dealDamage(G.p2,G.p1,p1e,M.d,M.n,M.kb||0,M.c);
     G.p2.en=Math.min(MEN,G.p2.en+8);
   }
@@ -665,8 +665,10 @@ function runAI(dt){
   if(G.p2.cd>0) return;
 
   switch(G.ais){
-    case 'approach': G.p2.x=cl(G.p2.x-2,SL,SR); G.p2.blk=false; G.p2.state='WALK'; break;
-    case 'retreat':  G.p2.x=cl(G.p2.x+1.5,SL,SR); G.p2.blk=false; G.p2.state='WALK'; break;
+    case 'approach':
+      G.p2.x=cl(G.p2.x+(G.p1.x<G.p2.x?-2:2),SL,SR); G.p2.blk=false; G.p2.state='WALK'; break;
+    case 'retreat':
+      G.p2.x=cl(G.p2.x+(G.p1.x<G.p2.x?1.5:-1.5),SL,SR); G.p2.blk=false; G.p2.state='WALK'; break;
     case 'light':    G.p2.blk=false; p2Attack('light'); break;
     case 'heavy':    G.p2.blk=false; p2Attack('heavy'); break;
     case 'special':  G.p2.blk=false; p2Attack('special'); break;
@@ -680,21 +682,38 @@ function runAI(dt){
       break;
   }
 
-  // Hard boundary — p2 always right of p1
-  G.p2.x=cl(G.p2.x, G.p1.x+76, SR);
-  G.p1.x=cl(G.p1.x, SL, G.p2.x-76);
+  // Soft push-apart only when both on ground (allows cross-up / jump-over)
+  const onG1=G.p1.state!=='JUMP', onG2=G.p2.state!=='JUMP';
+  if(onG1&&onG2){
+    const overlap=(G.p1.x+FW+4)-G.p2.x;
+    if(overlap>0){ G.p1.x-=overlap*0.5; G.p2.x+=overlap*0.5; }
+  }
+  G.p1.x=cl(G.p1.x,SL,SR); G.p2.x=cl(G.p2.x,SL,SR);
 }
 
 // ================================================================
 // INPUT
 // ================================================================
-const BLOCK_KEY='a'; // block = hold A (facing right = away from enemy)
+// Dash: double-tap within 200ms
+let lastKeyTime={a:0,d:0};
+function tryDash(dir){
+  if(!G.running||G.p1.state==='JUMP') return;
+  G.p1.x=cl(G.p1.x+dir*80, SL, SR);
+  G.p1.state='STAND'; applyStateClass(p1e,G.p1);
+  mvTxt(G.p1.x, G.p1.y+20, dir>0?'DASH →':'← DASH','#ffffff');
+}
 
 document.addEventListener('keydown',e=>{
   const k=e.key.toLowerCase();
   G.keys[k]=true;
   if(!G.running) return;
 
+  // Double-tap dash
+  if(k==='a'||k==='d'){
+    const now=Date.now(), dir=k==='a'?-1:1;
+    if(now-lastKeyTime[k]<200) tryDash(dir);
+    lastKeyTime[k]=now;
+  }
   switch(k){
     case 'w': doJump(G.p1,p1e); break;
     case 's':
@@ -737,14 +756,18 @@ function loop(ts){
   const spd=onGround?3.5:2.8;
 
   if(G.keys['a']){
-    G.p1.x=cl(G.p1.x-spd, SL, G.p2.x-76);
+    G.p1.x=cl(G.p1.x-spd, SL, SR);
     // Block = holding away from enemy (enemy is to the right)
     if(onGround && G.p1.state!=='ATTACK'&&G.p1.state!=='ATK-H'&&G.p1.state!=='HIT'&&G.p1.state!=='CROUCH'){
-      G.p1.state='BLOCK'; G.p1.blk=true; applyStateClass(p1e,G.p1);
+      // Block = moving away from enemy
+      if(G.p2.x > G.p1.x){ G.p1.state='BLOCK'; G.p1.blk=true; applyStateClass(p1e,G.p1); }
     }
   } else if(G.keys['d']){
-    G.p1.x=cl(G.p1.x+spd, SL, G.p2.x-76);
-    if(G.p1.state==='BLOCK'){G.p1.state='STAND';G.p1.blk=false;applyStateClass(p1e,G.p1);}
+    G.p1.x=cl(G.p1.x+spd, SL, SR);
+    // Block when moving right and enemy is to the LEFT
+    if(onGround && G.p2.x < G.p1.x && G.p1.state!=='ATTACK'&&G.p1.state!=='ATK-H'&&G.p1.state!=='HIT'&&G.p1.state!=='CROUCH'){
+      G.p1.state='BLOCK'; G.p1.blk=true; applyStateClass(p1e,G.p1);
+    } else if(G.p1.state==='BLOCK'){G.p1.state='STAND';G.p1.blk=false;applyStateClass(p1e,G.p1);}
   } else {
     if(G.p1.state==='BLOCK'){G.p1.state='STAND';G.p1.blk=false;applyStateClass(p1e,G.p1);}
   }
@@ -754,6 +777,15 @@ function loop(ts){
   // --- Physics ---
   physics();
 
+  // --- Auto-facing (fighters always turn toward each other) ---
+  if(G.p1.state!=='ATTACK'&&G.p1.state!=='ATK-H'){
+    const f1=G.p2.x>G.p1.x?1:-1;
+    if(f1!==G.p1.facing){ G.p1.facing=f1; p1e.style.transform=f1===1?'':'scaleX(-1)'; }
+  }
+  if(G.p2.state!=='ATTACK'&&G.p2.state!=='ATK-H'){
+    const f2=G.p1.x>G.p2.x?1:-1;
+    if(f2!==G.p2.facing){ G.p2.facing=f2; p2e.style.transform=f2===1?'scaleX(-1)':''; }
+  }
   // --- AI ---
   runAI(dt);
 
