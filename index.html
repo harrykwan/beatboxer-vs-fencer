@@ -2,200 +2,303 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>BEATBOXER vs FENCER</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-body { background:#0a0a0f; font-family:'Press Start 2P',monospace; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; overflow:hidden; color:#fff; }
-#gc { position:relative; width:800px; height:480px; background:linear-gradient(180deg,#1a0a2e 0%,#2d0a3e 40%,#1a0510 70%,#3a1a05 100%); border:4px solid #ff00ff; box-shadow:0 0 30px #ff00ff,0 0 60px #ff00ff44,inset 0 0 40px #00000080; overflow:hidden; }
-#gc::after { content:''; position:absolute; top:0; left:0; right:0; bottom:0; background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.08) 2px,rgba(0,0,0,0.08) 4px); pointer-events:none; z-index:100; }
-#floor { position:absolute; bottom:80px; left:0; right:0; height:8px; background:#ff6600; box-shadow:0 0 10px #ff6600,0 4px 0 #aa3300; }
-#hud { position:absolute; top:8px; left:0; right:0; display:flex; align-items:flex-start; justify-content:space-between; padding:0 12px; z-index:10; }
-.fhud { width:280px; }
-.fname { font-size:7px; color:#ffff00; text-shadow:2px 2px #000,0 0 8px #ffff00; margin-bottom:4px; }
-.hpbg { width:100%; height:14px; background:#333; border:2px solid #666; }
-.hp { height:100%; background:#00ff44; transition:width .1s; }
-.hp.y { background:#ffff00; }
-.hp.r { background:#ff2200; animation:hf .3s infinite; }
-@keyframes hf { 0%,100%{opacity:1}50%{opacity:.4} }
-.enbg { width:100%; height:8px; background:#222; border:2px solid #444; margin-top:3px; }
-.en { height:100%; background:#00ccff; transition:width .1s; }
-.en.full { background:#fff; box-shadow:0 0 6px #00ccff; animation:ep .5s infinite; }
-@keyframes ep { 0%,100%{opacity:1}50%{opacity:.6} }
-.pips { display:flex; gap:6px; margin-top:4px; }
-.pip { width:10px; height:10px; background:#333; border:2px solid #666; }
-.pip.won { background:#ff2200; border-color:#ff6600; box-shadow:0 0 6px #ff2200; }
-#mid { text-align:center; }
-#timer { font-size:20px; color:#fff; text-shadow:0 0 10px #fff,2px 2px #000; }
-#rnd { font-size:8px; color:#ff00ff; text-shadow:0 0 8px #ff00ff; margin-bottom:2px; }
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0a0a0f;font-family:'Press Start 2P',monospace;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;overflow:hidden;color:#fff;touch-action:none;}
+#game-wrap{position:relative;width:800px;transform-origin:top left;}
+#gc{position:relative;width:800px;height:480px;background:linear-gradient(180deg,#0d0020 0%,#1a0a2e 30%,#2d0a3e 55%,#1a0510 75%,#3a1a05 100%);border:4px solid #ff00ff;box-shadow:0 0 30px #ff00ff,0 0 60px #ff00ff44,inset 0 0 40px #00000080;overflow:hidden;}
+#gc::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.07) 2px,rgba(0,0,0,0.07) 4px);pointer-events:none;z-index:100;}
+#floor{position:absolute;bottom:80px;left:0;right:0;height:8px;background:#ff6600;box-shadow:0 0 12px #ff6600,0 4px 0 #aa3300;}
+#floor-shadow{position:absolute;bottom:72px;left:0;right:0;height:4px;background:#00000044;}
+#bgcity{position:absolute;bottom:88px;left:0;right:0;height:200px;opacity:.13;
+  background:
+    linear-gradient(transparent 38%,#ff00ff 38%,#ff00ff 100%) 0/42px 200px,
+    linear-gradient(transparent 52%,#8800ff 52%,#8800ff 100%) 55px/58px 200px,
+    linear-gradient(transparent 68%,#ff00ff 68%,#ff00ff 100%) 128px/32px 200px,
+    linear-gradient(transparent 33%,#8800ff 33%,#8800ff 100%) 185px/85px 200px,
+    linear-gradient(transparent 58%,#ff00ff 58%,#ff00ff 100%) 295px/52px 200px,
+    linear-gradient(transparent 43%,#8800ff 43%,#8800ff 100%) 375px/75px 200px,
+    linear-gradient(transparent 62%,#ff00ff 62%,#ff00ff 100%) 478px/42px 200px,
+    linear-gradient(transparent 28%,#8800ff 28%,#8800ff 100%) 558px/92px 200px,
+    linear-gradient(transparent 55%,#ff00ff 55%,#ff00ff 100%) 678px/58px 200px,
+    linear-gradient(transparent 40%,#8800ff 40%,#8800ff 100%) 762px/38px 200px;}
+
+/* HUD */
+#hud{position:absolute;top:8px;left:0;right:0;display:flex;align-items:flex-start;justify-content:space-between;padding:0 12px;z-index:10;}
+.fhud{width:280px;}
+.fname{font-size:7px;color:#ffff00;text-shadow:2px 2px #000,0 0 8px #ffff00;margin-bottom:4px;}
+.hpbg{width:100%;height:14px;background:#333;border:2px solid #666;}
+.hp{height:100%;background:#00ff44;transition:width .1s;}
+.hp.y{background:#ffff00;}
+.hp.r{background:#ff2200;animation:hf .3s infinite;}
+@keyframes hf{0%,100%{opacity:1}50%{opacity:.4}}
+.enbg{width:100%;height:8px;background:#222;border:2px solid #444;margin-top:3px;}
+.en{height:100%;background:#00ccff;transition:width .1s;}
+.en.full{background:#fff;box-shadow:0 0 6px #00ccff;animation:ep .5s infinite;}
+@keyframes ep{0%,100%{opacity:1}50%{opacity:.6}}
+.pips{display:flex;gap:6px;margin-top:4px;}
+.pip{width:10px;height:10px;background:#333;border:2px solid #666;}
+.pip.won{background:#ff2200;border-color:#ff6600;box-shadow:0 0 6px #ff2200;}
+#mid{text-align:center;}
+#timer{font-size:20px;color:#fff;text-shadow:0 0 10px #fff,2px 2px #000;}
+#rnd{font-size:8px;color:#ff00ff;text-shadow:0 0 8px #ff00ff;margin-bottom:2px;}
 
 /* FIGHTERS */
-.fighter { position:absolute; bottom:88px; width:64px; height:96px; }
-.pb { position:absolute; }
+.fighter{position:absolute;width:64px;height:96px;}
+.pb{position:absolute;}
+#p1 .band{width:36px;height:4px;top:3px;left:14px;background:#ff6600;}
+#p1 .hl{width:6px;height:10px;top:5px;left:12px;background:#222;border:2px solid #ff6600;}
+#p1 .hr{width:6px;height:10px;top:5px;left:46px;background:#222;border:2px solid #ff6600;}
+#p1 .hd{width:24px;height:24px;top:0;left:20px;background:#f5c5a3;border:2px solid #c8956c;}
+#p1 .tr{width:32px;height:32px;top:26px;left:16px;background:#2233ff;border:2px solid #0011cc;}
+#p1 .mc{width:6px;height:10px;top:28px;left:48px;background:#aaa;border:2px solid #666;}
+#p1 .al{width:12px;height:28px;top:28px;left:4px;background:#2233ff;border:2px solid #0011cc;}
+#p1 .ar{width:12px;height:28px;top:28px;left:48px;background:#2233ff;border:2px solid #0011cc;}
+#p1 .ll{width:14px;height:36px;top:58px;left:16px;background:#111133;border:2px solid #000;}
+#p1 .lr{width:14px;height:36px;top:58px;left:34px;background:#111133;border:2px solid #000;}
+#p1 .sl{width:18px;height:8px;top:88px;left:12px;background:#ff6600;}
+#p1 .sr{width:18px;height:8px;top:88px;left:32px;background:#ff6600;}
+#p2{transform:scaleX(-1);}
+#p2 .hd{width:22px;height:22px;top:0;left:21px;background:#f5c5a3;border:2px solid #c8956c;}
+#p2 .msk{width:26px;height:20px;top:0;left:19px;background:transparent;border:3px solid #aaa;border-radius:2px;}
+#p2 .mg{width:22px;height:16px;top:2px;left:21px;background:repeating-linear-gradient(90deg,#888 0,#888 2px,transparent 2px,transparent 6px),repeating-linear-gradient(0deg,#888 0,#888 2px,transparent 2px,transparent 6px);opacity:.7;}
+#p2 .tr{width:28px;height:34px;top:24px;left:18px;background:#eee;border:2px solid #aaa;}
+#p2 .al{width:10px;height:26px;top:26px;left:8px;background:#eee;border:2px solid #aaa;}
+#p2 .ar{width:10px;height:26px;top:26px;left:46px;background:#eee;border:2px solid #aaa;}
+#p2 .ep{width:4px;height:52px;top:10px;left:54px;background:linear-gradient(180deg,#fff 0%,#aaa 50%,#666 100%);border:1px solid #888;box-shadow:0 0 6px #ffffff88;}
+#p2 .eg{width:12px;height:6px;top:32px;left:50px;background:#888;border:2px solid #666;}
+#p2 .ll{width:12px;height:36px;top:58px;left:18px;background:#ddd;border:2px solid #999;}
+#p2 .lr{width:12px;height:36px;top:58px;left:34px;background:#ddd;border:2px solid #999;}
+#p2 .sl{width:16px;height:8px;top:88px;left:14px;background:#333;}
+#p2 .sr{width:16px;height:8px;top:88px;left:32px;background:#333;}
 
-/* BEATBOXER */
-#p1 { left:100px; }
-#p1 .band { width:36px;height:4px;top:3px;left:14px;background:#ff6600; }
-#p1 .hl { width:6px;height:10px;top:5px;left:12px;background:#222;border:2px solid #ff6600; }
-#p1 .hr { width:6px;height:10px;top:5px;left:46px;background:#222;border:2px solid #ff6600; }
-#p1 .hd { width:24px;height:24px;top:0;left:20px;background:#f5c5a3;border:2px solid #c8956c; }
-#p1 .tr { width:32px;height:32px;top:26px;left:16px;background:#2233ff;border:2px solid #0011cc; }
-#p1 .mc { width:6px;height:10px;top:28px;left:48px;background:#aaa;border:2px solid #666; }
-#p1 .al { width:12px;height:28px;top:28px;left:4px;background:#2233ff;border:2px solid #0011cc; }
-#p1 .ar { width:12px;height:28px;top:28px;left:48px;background:#2233ff;border:2px solid #0011cc; }
-#p1 .ll { width:14px;height:36px;top:58px;left:16px;background:#111133;border:2px solid #000; }
-#p1 .lr { width:14px;height:36px;top:58px;left:34px;background:#111133;border:2px solid #000; }
-#p1 .sl { width:18px;height:8px;top:88px;left:12px;background:#ff6600; }
-#p1 .sr { width:18px;height:8px;top:88px;left:32px;background:#ff6600; }
+/* attack pose tweaks */
+.fighter.atk .ar{transform:translateX(20px);}
+.fighter.atk2 .ar{transform:translateX(26px) translateY(-10px);}
+.fighter.blk{filter:brightness(1.7);}
+.fighter.hit{filter:brightness(4) saturate(0);}
+.fighter.jumping .ll{transform:translateY(-8px) rotate(-20deg);}
+.fighter.jumping .lr{transform:translateY(-4px) rotate(20deg);}
+.fighter.jumping .sl{opacity:0;}
+.fighter.jumping .sr{opacity:0;}
 
-/* FENCER */
-#p2 { right:100px; transform:scaleX(-1); }
-#p2 .hd { width:22px;height:22px;top:0;left:21px;background:#f5c5a3;border:2px solid #c8956c; }
-#p2 .msk { width:26px;height:20px;top:0;left:19px;background:transparent;border:3px solid #aaa;border-radius:2px; }
-#p2 .mg { width:22px;height:16px;top:2px;left:21px;background:repeating-linear-gradient(90deg,#888 0,#888 2px,transparent 2px,transparent 6px),repeating-linear-gradient(0deg,#888 0,#888 2px,transparent 2px,transparent 6px);opacity:.7; }
-#p2 .tr { width:28px;height:34px;top:24px;left:18px;background:#eee;border:2px solid #aaa; }
-#p2 .al { width:10px;height:26px;top:26px;left:8px;background:#eee;border:2px solid #aaa; }
-#p2 .ar { width:10px;height:26px;top:26px;left:46px;background:#eee;border:2px solid #aaa; }
-#p2 .ep { width:4px;height:52px;top:10px;left:54px;background:linear-gradient(180deg,#fff 0%,#aaa 50%,#666 100%);border:1px solid #888;box-shadow:0 0 4px #ffffff88; }
-#p2 .eg { width:12px;height:6px;top:32px;left:50px;background:#888;border:2px solid #666; }
-#p2 .ll { width:12px;height:36px;top:58px;left:18px;background:#ddd;border:2px solid #999; }
-#p2 .lr { width:12px;height:36px;top:58px;left:34px;background:#ddd;border:2px solid #999; }
-#p2 .sl { width:16px;height:8px;top:88px;left:14px;background:#333; }
-#p2 .sr { width:16px;height:8px;top:88px;left:32px;background:#333; }
+/* shadow under fighter */
+.fshadow{position:absolute;border-radius:50%;background:rgba(0,0,0,0.4);z-index:1;transition:width .1s,left .1s;}
 
-.fighter.atk .ar { transform:translateX(18px); }
-.fighter.atk2 .ar { transform:translateX(24px) translateY(-8px); }
-.fighter.blk { filter:brightness(1.6); }
-.fighter.hit { filter:brightness(4) saturate(0); }
+/* Projectiles */
+.proj{position:absolute;z-index:20;pointer-events:none;}
+.sw-ring{border-radius:50%;border:3px solid #00ffff;box-shadow:0 0 10px #00ffff,0 0 20px #0088ff,inset 0 0 8px #00ffff44;}
+.sw-bar{height:8px;border-radius:4px;background:linear-gradient(90deg,#00ffff,#ff00ff);box-shadow:0 0 10px #00ffff,0 0 20px #ff00ff;}
+.pb-shot{width:20px;height:20px;}
+.pb-proj{width:16px;height:10px;border-radius:4px;background:#00ffff;box-shadow:0 0 8px #00ffff,0 0 16px #0088ff;}
+.shockwave{position:absolute;border-radius:50%;border:4px solid #ff6600;box-shadow:0 0 20px #ff6600;pointer-events:none;z-index:25;animation:shockAnim .4s forwards;}
+@keyframes shockAnim{0%{width:20px;height:20px;opacity:1}100%{width:140px;height:60px;opacity:0;margin-left:-60px;margin-top:-30px;}}
 
-.proj { position:absolute; z-index:20; }
-.pb-proj { width:16px;height:10px;border-radius:4px;background:#00ffff;box-shadow:0 0 8px #00ffff,0 0 16px #0088ff; }
+/* FX */
+.dmgtxt{position:absolute;font-family:'Press Start 2P',monospace;font-size:11px;color:#ffff00;text-shadow:2px 2px #ff0000,0 0 8px #ffff00;pointer-events:none;z-index:50;animation:fu 1s forwards;}
+@keyframes fu{0%{opacity:1;transform:translateY(0) scale(1)}50%{opacity:1;transform:translateY(-30px) scale(1.3)}100%{opacity:0;transform:translateY(-60px) scale(.8)}}
+.mvtxt{position:absolute;font-family:'Press Start 2P',monospace;font-size:7px;color:#ff00ff;text-shadow:1px 1px #000,0 0 6px #ff00ff;pointer-events:none;z-index:50;animation:mf 1.2s forwards;white-space:nowrap;}
+@keyframes mf{0%{opacity:0;transform:scale(.5)}20%{opacity:1;transform:scale(1.1)}70%{opacity:1;transform:translateY(-10px) scale(1)}100%{opacity:0;transform:translateY(-25px) scale(.8)}}
+#sf{position:absolute;top:0;left:0;right:0;bottom:0;background:white;opacity:0;pointer-events:none;z-index:90;transition:opacity .05s;}
 
-.dmgtxt { position:absolute; font-family:'Press Start 2P',monospace; font-size:11px; color:#ffff00; text-shadow:2px 2px #ff0000,0 0 8px #ffff00; pointer-events:none; z-index:50; animation:fu 1s forwards; }
-@keyframes fu { 0%{opacity:1;transform:translateY(0) scale(1)} 50%{opacity:1;transform:translateY(-30px) scale(1.3)} 100%{opacity:0;transform:translateY(-60px) scale(.8)} }
-.mvtxt { position:absolute; font-family:'Press Start 2P',monospace; font-size:7px; color:#ff00ff; text-shadow:1px 1px #000,0 0 6px #ff00ff; pointer-events:none; z-index:50; animation:mf 1.2s forwards; white-space:nowrap; }
-@keyframes mf { 0%{opacity:0;transform:scale(.5)} 20%{opacity:1;transform:scale(1.1)} 70%{opacity:1;transform:translateY(-10px) scale(1)} 100%{opacity:0;transform:translateY(-25px) scale(.8)} }
-#sf { position:absolute;top:0;left:0;right:0;bottom:0;background:white;opacity:0;pointer-events:none;z-index:90;transition:opacity .05s; }
-.ovl { position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200; }
-.ovl h1 { font-size:16px;color:#ff00ff;text-shadow:0 0 20px #ff00ff,3px 3px #000;margin-bottom:14px;text-align:center;line-height:2; }
-.ovl h2 { font-size:10px;color:#ffff00;text-shadow:0 0 10px #ffff00,2px 2px #000;margin-bottom:20px; }
-.ovl p { font-size:6px;color:#aaa;margin:4px 0; }
-.btn { margin-top:18px;padding:12px 20px;background:#ff00ff;color:#000;border:none;font-family:'Press Start 2P',monospace;font-size:8px;cursor:pointer;box-shadow:4px 4px 0 #880088; }
-.btn:hover { background:#ff88ff;transform:translate(-2px,-2px);box-shadow:6px 6px 0 #880088; }
-#ctrl { position:absolute;bottom:4px;left:8px;font-size:5px;color:#777;z-index:10;line-height:1.9; }
-#ann { position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:20px;color:#ffff00;text-shadow:0 0 20px #ffff00,4px 4px #000;z-index:150;pointer-events:none;animation:aa 1.5s forwards; }
-@keyframes aa { 0%{opacity:0;transform:translate(-50%,-50%) scale(.3)} 30%{opacity:1;transform:translate(-50%,-50%) scale(1.2)} 70%{opacity:1;transform:translate(-50%,-50%) scale(1)} 100%{opacity:0;transform:translate(-50%,-50%) scale(1.5)} }
-#bgcity { position:absolute;bottom:88px;left:0;right:0;height:160px;opacity:.12;
-  background:linear-gradient(transparent 40%,#ff00ff 40%,#ff00ff 100%) 0/40px 160px,
-             linear-gradient(transparent 50%,#8800ff 50%,#8800ff 100%) 50px/60px 160px,
-             linear-gradient(transparent 70%,#ff00ff 70%,#ff00ff 100%) 130px/30px 160px,
-             linear-gradient(transparent 35%,#8800ff 35%,#8800ff 100%) 190px/80px 160px,
-             linear-gradient(transparent 60%,#ff00ff 60%,#ff00ff 100%) 300px/50px 160px,
-             linear-gradient(transparent 45%,#8800ff 45%,#8800ff 100%) 380px/70px 160px,
-             linear-gradient(transparent 55%,#ff00ff 55%,#ff00ff 100%) 480px/45px 160px,
-             linear-gradient(transparent 30%,#8800ff 30%,#8800ff 100%) 560px/90px 160px,
-             linear-gradient(transparent 65%,#ff00ff 65%,#ff00ff 100%) 680px/55px 160px,
-             linear-gradient(transparent 42%,#8800ff 42%,#8800ff 100%) 760px/40px 160px; }
+/* Overlays */
+.ovl{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;}
+.ovl h1{font-size:16px;color:#ff00ff;text-shadow:0 0 20px #ff00ff,3px 3px #000;margin-bottom:12px;text-align:center;line-height:2.2;}
+.ovl h2{font-size:10px;color:#ffff00;text-shadow:0 0 10px #ffff00,2px 2px #000;margin-bottom:16px;}
+.ovl p{font-size:6px;color:#aaa;margin:3px 0;}
+.ovl .sec{font-size:6px;color:#00ccff;margin:3px 0;}
+.btn{margin-top:16px;padding:12px 20px;background:#ff00ff;color:#000;border:none;font-family:'Press Start 2P',monospace;font-size:8px;cursor:pointer;box-shadow:4px 4px 0 #880088;}
+.btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #880088;}
+#ann{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:20px;color:#ffff00;text-shadow:0 0 20px #ffff00,4px 4px #000;z-index:150;pointer-events:none;animation:aa 1.5s forwards;}
+@keyframes aa{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}30%{opacity:1;transform:translate(-50%,-50%) scale(1.2)}70%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.5)}}
+#ctrl{position:absolute;bottom:4px;left:8px;font-size:5px;color:#666;z-index:10;line-height:1.9;}
+
+/* TOUCH CONTROLLER */
+#touch-ctrl{display:none;width:100%;max-width:800px;padding:10px 8px;background:#0a0a0f;justify-content:space-between;align-items:flex-end;gap:8px;touch-action:none;user-select:none;}
+#tc-left,#tc-right{display:flex;flex-direction:column;gap:6px;align-items:flex-start;}
+#tc-right{align-items:flex-end;}
+.tc-row{display:flex;gap:6px;}
+.tcb{font-family:'Press Start 2P',monospace;font-size:7px;padding:13px 9px;background:#1a1a2e;color:#fff;border:2px solid #ff00ff;border-radius:4px;cursor:pointer;box-shadow:0 0 6px #ff00ff44;-webkit-tap-highlight-color:transparent;min-width:48px;text-align:center;line-height:1.4;}
+.tcb:active,.tcb.active{background:#ff00ff;color:#000;}
+.jmp-btn{border-color:#ffffff;box-shadow:0 0 8px #ffffff44;font-size:9px;}
+.jmp-btn:active{background:#fff;color:#000;}
+.atk-btn{border-color:#00ffff;box-shadow:0 0 6px #00ffff44;}
+.atk-btn:active{background:#00ffff;color:#000;}
+.sw-btn{border-color:#ff00ff;box-shadow:0 0 6px #ff00ff44;font-size:6px;}
+.sw-btn:active{background:#ff00ff;color:#000;}
+.heavy-btn{border-color:#ff6600;box-shadow:0 0 6px #ff660044;}
+.heavy-btn:active{background:#ff6600;color:#000;}
+.blk-btn{border-color:#00ff44;box-shadow:0 0 6px #00ff4444;}
+.blk-btn:active{background:#00ff44;color:#000;}
+.sup-btn{border-color:#ffff00;box-shadow:0 0 8px #ffff0066;font-size:6px;}
+.sup-btn:active{background:#ffff00;color:#000;}
+
+@media(max-width:820px){
+  body{justify-content:flex-start;align-items:flex-start;}
+  #game-wrap{width:100vw;}
+  .ovl h1{font-size:11px!important;}
+  .ovl h2{font-size:8px!important;}
+  .ovl p,.ovl .sec{font-size:5px!important;}
+  .btn{font-size:7px!important;padding:10px 14px!important;margin-top:10px!important;}
+  #touch-ctrl{display:flex!important;}
+  #ctrl{display:none;}
+}
 </style>
 </head>
 <body>
-<div id="game-wrap"><div id="gc">
+<div id="game-wrap">
+<div id="gc">
   <div id="sf"></div>
   <div id="bgcity"></div>
   <div id="floor"></div>
+  <div id="floor-shadow"></div>
 
   <div id="hud">
     <div class="fhud">
       <div class="fname">🎤 BEATBOXER</div>
       <div class="hpbg"><div class="hp" id="h1"></div></div>
       <div class="enbg"><div class="en" id="e1"></div></div>
-      <div class="pips" id="pp1"><div class="pip" id="p1p0"></div><div class="pip" id="p1p1"></div></div>
+      <div class="pips"><div class="pip" id="p1p0"></div><div class="pip" id="p1p1"></div></div>
     </div>
     <div id="mid"><div id="rnd">ROUND <span id="rn">1</span></div><div id="timer">60</div></div>
     <div class="fhud" style="text-align:right">
       <div class="fname">🤺 FENCER</div>
       <div class="hpbg"><div class="hp" id="h2" style="float:right"></div></div>
       <div class="enbg"><div class="en" id="e2" style="float:right"></div></div>
-      <div class="pips" id="pp2" style="justify-content:flex-end"><div class="pip" id="p2p0"></div><div class="pip" id="p2p1"></div></div>
+      <div class="pips" style="justify-content:flex-end"><div class="pip" id="p2p0"></div><div class="pip" id="p2p1"></div></div>
     </div>
   </div>
+
+  <div class="fshadow" id="sh1"></div>
+  <div class="fshadow" id="sh2"></div>
 
   <div class="fighter" id="p1">
     <div class="pb band"></div><div class="pb hl"></div><div class="pb hr"></div>
     <div class="pb hd" id="p1hd"></div><div class="pb tr"></div><div class="pb mc"></div>
-    <div class="pb al"></div><div class="pb ar"></div>
+    <div class="pb al"></div><div class="pb ar" id="p1ar"></div>
     <div class="pb ll"></div><div class="pb lr"></div>
     <div class="pb sl"></div><div class="pb sr"></div>
   </div>
-
   <div class="fighter" id="p2">
     <div class="pb hd"></div><div class="pb msk"></div><div class="pb mg"></div>
     <div class="pb tr"></div><div class="pb al"></div><div class="pb ar"></div>
-    <div class="pb ep"></div><div class="pb eg"></div>
+    <div class="pb ep" id="p2ep"></div><div class="pb eg"></div>
     <div class="pb ll"></div><div class="pb lr"></div>
     <div class="pb sl"></div><div class="pb sr"></div>
   </div>
 
-  <div id="ctrl">Q/E=MOVE &nbsp; A=HI-HAT JAB &nbsp; S=808 BOOM &nbsp; D=BEATBOX BARRAGE &nbsp; W=BLOCK &nbsp; W+S=FREESTYLE BREAK (SUPER)</div>
+  <div id="ctrl">Q/E=MOVE &nbsp; SPACE=JUMP &nbsp; A=JAB &nbsp; S=BOOM &nbsp; D=BARRAGE &nbsp; F=SOUND WAVE &nbsp; W=BLOCK &nbsp; W+S=SUPER &nbsp; JUMP+A/S=AERIAL</div>
 
   <div class="ovl" id="ss" onclick="startGame()">
     <h1>🎤 BEATBOXER<br>VS<br>🤺 FENCER</h1>
     <h2>BEST OF 3 ROUNDS</h2>
-    <p>Q/E = Move Left/Right</p>
-    <p>A = Hi-Hat Jab (fast, 8dmg)</p>
-    <p>S = 808 Boom (heavy, 20dmg)</p>
-    <p>D = Beatbox Barrage (5 projectiles, costs 25 energy)</p>
-    <p>W = Rhythm Shield (block)</p>
-    <p style="color:#ffff00;margin-top:10px">W + S = FREESTYLE BREAK SUPER (100 energy)</p>
-    <button class="btn" onclick="startGame()">FIGHT!</button><p style="margin-top:10px;color:#555;font-size:5px">or tap anywhere on screen</p>
+    <p>Q / E = Move &nbsp;|&nbsp; SPACE = Jump</p>
+    <p>A = Hi-Hat Jab &nbsp;|&nbsp; S = 808 Boom</p>
+    <p>D = Beatbox Barrage (5 shots, 25 energy)</p>
+    <p class="sec">F = SOUND WAVE (big ring shot, 30 energy)</p>
+    <p>W = Block &nbsp;|&nbsp; W+S = FREESTYLE BREAK SUPER</p>
+    <p class="sec">JUMP + A = Aerial Jab &nbsp;|&nbsp; JUMP + S = Bass Drop</p>
+    <button class="btn">FIGHT!</button>
   </div>
-
   <div class="ovl" id="ks" style="display:none">
-    <h1 id="kt">K.O.!</h1>
-    <h2 id="kw"></h2>
-    <p id="ksc"></p>
+    <h1 id="kt">K.O.!</h1><h2 id="kw"></h2><p id="ksc"></p>
     <button class="btn" onclick="nextRound()">NEXT ROUND</button>
   </div>
-
   <div class="ovl" id="es" style="display:none">
-    <h1 id="et"></h1>
-    <h2 id="ew"></h2>
+    <h1 id="et"></h1><h2 id="ew"></h2>
     <button class="btn" onclick="location.reload()">PLAY AGAIN</button>
   </div>
-</div></div>
+</div>
+</div>
 
-<div id="gc-spacer"></div>
+<div id="touch-ctrl">
+  <div id="tc-left">
+    <div class="tc-row">
+      <button class="tcb jmp-btn" id="tc-jump">JUMP</button>
+    </div>
+    <div class="tc-row" style="margin-top:6px">
+      <button class="tcb" id="tc-q">◀</button>
+      <button class="tcb" id="tc-e">▶</button>
+    </div>
+  </div>
+  <div id="tc-right">
+    <div class="tc-row">
+      <button class="tcb sw-btn" id="tc-f">WAVE</button>
+      <button class="tcb atk-btn" id="tc-d">BURST</button>
+      <button class="tcb sup-btn" id="tc-sup">★SUPER</button>
+    </div>
+    <div class="tc-row" style="margin-top:6px">
+      <button class="tcb" id="tc-a">JAB</button>
+      <button class="tcb heavy-btn" id="tc-s">BOOM</button>
+      <button class="tcb blk-btn" id="tc-w">BLOCK</button>
+    </div>
+  </div>
+</div>
 
 <script>
-const SL=40,SR=696,FW=64,MHP=100,MEN=100,RT=60;
-let G={running:false,round:1,w1:0,w2:0,timer:RT,ti:null,
-  p1:{hp:MHP,en:0,x:100,blk:false,cd:0},
-  p2:{hp:MHP,en:0,x:640,blk:false,cd:0},
-  keys:{},gl:null,ais:'approach',ait:1,
+// ============================================================
+// CONSTANTS
+// ============================================================
+const SL=40, SR=696, FW=64, FH=96;
+const GROUND=480-88-FH; // bottom of canvas minus floor minus fighter height = top position when grounded
+const GRAVITY=0.65, JUMP_FORCE=-14;
+const MHP=100, MEN=100, RT=60;
+
+// ============================================================
+// STATE
+// ============================================================
+let G={
+  running:false, round:1, w1:0, w2:0, timer:RT, ti:null,
+  p1:{hp:MHP,en:0,x:100,y:GROUND,vy:0,onGround:true,blk:false,cd:0,jumped:false},
+  p2:{hp:MHP,en:0,x:640,y:GROUND,vy:0,onGround:true,blk:false,cd:0,jumped:false},
+  keys:{}, gl:null,
+  ais:'approach', ait:1, aiAgro:false,
 };
 
-const p1e=document.getElementById('p1'),p2e=document.getElementById('p2');
-const h1=document.getElementById('h1'),h2=document.getElementById('h2');
-const e1=document.getElementById('e1'),e2=document.getElementById('e2');
-const tme=document.getElementById('timer'),rne=document.getElementById('rn');
-const sfe=document.getElementById('sf'),gc=document.getElementById('gc');
+// ============================================================
+// DOM
+// ============================================================
+const p1e=document.getElementById('p1'), p2e=document.getElementById('p2');
+const h1=document.getElementById('h1'), h2=document.getElementById('h2');
+const e1=document.getElementById('e1'), e2=document.getElementById('e2');
+const tme=document.getElementById('timer'), rne=document.getElementById('rn');
+const sfe=document.getElementById('sf'), gc=document.getElementById('gc');
+const sh1=document.getElementById('sh1'), sh2=document.getElementById('sh2');
 
 function cl(v,a,b){return Math.max(a,Math.min(b,v));}
 
+// ============================================================
+// HUD + POSITION
+// ============================================================
 function hud(){
-  const q1=G.p1.hp/MHP*100,q2=G.p2.hp/MHP*100;
+  const q1=G.p1.hp/MHP*100, q2=G.p2.hp/MHP*100;
   h1.style.width=q1+'%'; h2.style.width=q2+'%';
   h1.className='hp'+(q1<=25?' r':q1<=50?' y':'');
   h2.className='hp'+(q2<=25?' r':q2<=50?' y':'');
   e1.style.width=(G.p1.en/MEN*100)+'%'; e2.style.width=(G.p2.en/MEN*100)+'%';
-  e1.className='en'+(G.p1.en>=MEN?' full':''); e2.className='en'+(G.p2.en>=MEN?' full':'');
+  e1.className='en'+(G.p1.en>=MEN?' full':'');
+  e2.className='en'+(G.p2.en>=MEN?' full':'');
   tme.textContent=Math.ceil(G.timer);
 }
+
 function pos(){
+  // p1 positioned from left, p2 positioned from left (we use transform for flip)
   p1e.style.left=G.p1.x+'px';
-  p2e.style.right=(800-G.p2.x-FW)+'px';
+  p1e.style.top=G.p1.y+'px';
+  p2e.style.left=G.p2.x+'px';
+  p2e.style.top=G.p2.y+'px';
+
+  // shadows on ground
+  const s1h=cl(1-(G.p1.y-GROUND)/150,0.1,1);
+  const s2h=cl(1-(G.p2.y-GROUND)/150,0.1,1);
+  const sw1=cl(40+30*(1-s1h),20,70), sw2=cl(40+30*(1-s2h),20,70);
+  sh1.style.cssText=`width:${sw1}px;height:10px;left:${G.p1.x+(FW-sw1)/2}px;top:${GROUND+FH-4}px;opacity:${s1h*0.5};`;
+  sh2.style.cssText=`width:${sw2}px;height:10px;left:${G.p2.x+(FW-sw2)/2}px;top:${GROUND+FH-4}px;opacity:${s2h*0.5};`;
 }
+
 function flash(c='white'){sfe.style.background=c;sfe.style.opacity='.65';setTimeout(()=>sfe.style.opacity='0',80);}
 
 function dmgTxt(x,y,d,c='#ffff00'){
@@ -204,10 +307,10 @@ function dmgTxt(x,y,d,c='#ffff00'){
   el.style.cssText=`left:${x}px;top:${y}px;color:${c}`;
   gc.appendChild(el); setTimeout(()=>el.remove(),1000);
 }
-function mvTxt(x,y,n){
+function mvTxt(x,y,n,c='#ff00ff'){
   const el=document.createElement('div');
   el.className='mvtxt'; el.textContent=n;
-  el.style.cssText=`left:${x}px;top:${y}px`;
+  el.style.cssText=`left:${cl(x,0,680)}px;top:${y}px;color:${c};text-shadow:1px 1px #000,0 0 6px ${c}`;
   gc.appendChild(el); setTimeout(()=>el.remove(),1200);
 }
 function ann(t,d=1500){
@@ -218,119 +321,255 @@ function ann(t,d=1500){
 }
 function hitFx(el){el.classList.add('hit');setTimeout(()=>el.classList.remove('hit'),130);}
 
+// ============================================================
+// JUMP
+// ============================================================
+function jump(p, pel){
+  if(!p.onGround) return;
+  p.vy=JUMP_FORCE; p.onGround=false; p.jumped=true;
+  pel.classList.add('jumping');
+}
+
+// ============================================================
 // DAMAGE
-function dmg(atk,def,del,d,nm,kb=0){
-  if(!G.running)return;
+// ============================================================
+function dmg(atk, def, del, d, nm, kb=0, color='#ff00ff'){
+  if(!G.running) return;
   const is2=def===G.p2;
   if(def.blk){
-    const r=is2?.1:.2;
-    if(is2&&Math.random()<.4){setTimeout(()=>dmg(G.p2,G.p1,p1e,15,'RIPOSTE!'),220);}
-    d=Math.round(d*r);
+    if(is2 && Math.random()<0.45) setTimeout(()=>dmg(G.p2,G.p1,p1e,15,'RIPOSTE!',0,'#ffffff'),200);
+    d=Math.round(d*0.15);
   }
   def.hp=Math.max(0,def.hp-d);
   atk.en=Math.min(MEN,atk.en+8); def.en=Math.min(MEN,def.en+5);
   hitFx(del);
-  if(d>14)flash(is2?'#ff0088':'#0088ff');
-  if(is2){dmgTxt(G.p2.x-10,200,d);if(nm)mvTxt(G.p1.x,155,nm);if(kb)G.p2.x=cl(G.p2.x+kb,SL,SR);}
-  else{dmgTxt(G.p1.x,200,d,'#ff4444');if(nm)mvTxt(Math.max(10,G.p2.x-100),155,nm);if(kb)G.p1.x=cl(G.p1.x-kb,SL,SR);}
-  if(def.hp<=0)endRound();
-}
-
-// P1 ATTACKS
-function atk1(t){
-  if(!G.running||G.p1.cd>0)return;
-  const M={
-    light:{n:'HI-HAT JAB',d:8,eg:10,cd:18,rng:95},
-    heavy:{n:'808 BOOM',d:20,eg:14,cd:45,rng:85,kb:55},
-    special:{n:'BEATBOX BARRAGE',d:4,hits:5,ec:25,cd:52},
-    super:{n:'FREESTYLE BREAK',d:40,ec:100,cd:80,fs:true},
-  }[t];
-  if(!M)return;
-  if(M.ec&&G.p1.en<M.ec)return;
-  if(M.ec)G.p1.en-=M.ec;
-  G.p1.cd=M.cd;
-  p1e.classList.add(t==='light'?'atk':t==='heavy'?'atk2':'atk');
-  setTimeout(()=>p1e.classList.remove('atk','atk2'),220);
-  if(M.fs){flash('#00ffff');ann('FREESTYLE BREAK!!');dmg(G.p1,G.p2,p2e,M.d,M.n);return;}
-  if(M.hits){
-    mvTxt(G.p1.x,155,M.n);
-    for(let i=0;i<M.hits;i++)setTimeout(()=>proj1(),i*90);
-    return;
+  if(d>14) flash(is2?'#ff0088':'#0088ff');
+  const ty=Math.min(def.y+80,350);
+  if(is2){
+    dmgTxt(G.p2.x,ty,d);
+    if(nm) mvTxt(G.p1.x,ty-40,nm,color);
+    if(kb) G.p2.x=cl(G.p2.x+kb,SL,SR);
+  } else {
+    dmgTxt(G.p1.x,ty,d,'#ff4444');
+    if(nm) mvTxt(Math.max(10,G.p2.x-110),ty-40,nm,color);
+    if(kb) G.p1.x=cl(G.p1.x-kb,SL,SR);
   }
-  const dist=G.p2.x-G.p1.x;
-  if(dist<M.rng){dmg(G.p1,G.p2,p2e,M.d,M.n,M.kb||0);G.p1.en=Math.min(MEN,G.p1.en+(M.eg||0));}
+  if(def.hp<=0) endRound();
 }
 
-function proj1(){
+// ============================================================
+// PROJECTILES
+// ============================================================
+function spawnBarrage(){
+  mvTxt(G.p1.x, G.p1.y+40, 'BEATBOX BARRAGE', '#00ffff');
+  for(let i=0;i<5;i++) setTimeout(()=>spawnBullet(),i*90);
+}
+function spawnBullet(){
   const el=document.createElement('div');
   el.className='proj pb-proj';
-  let x=G.p1.x+60, y=250+Math.random()*20;
+  let x=G.p1.x+62, y=G.p1.y+45+Math.random()*20;
   el.style.cssText=`top:${y}px;left:${x}px`;
   gc.appendChild(el);
   const id=setInterval(()=>{
-    x+=13; el.style.left=x+'px';
-    if(x>G.p2.x-8&&x<G.p2.x+FW){dmg(G.p1,G.p2,p2e,4,null);el.remove();clearInterval(id);}
+    x+=14; el.style.left=x+'px';
+    if(x>G.p2.x-8&&x<G.p2.x+FW&&y>G.p2.y&&y<G.p2.y+FH){
+      dmg(G.p1,G.p2,p2e,4,null,0,'#00ffff'); el.remove(); clearInterval(id);
+    }
     if(x>860){el.remove();clearInterval(id);}
   },28);
 }
 
-// P2 ATTACKS (AI)
-function atk2(t){
-  if(!G.running||G.p2.cd>0)return;
+function spawnSoundWave(){
+  // Big expanding ring shot
+  mvTxt(G.p1.x, G.p1.y+20, 'SONIC WAVE!!', '#ff00ff');
+  const el=document.createElement('div');
+  el.className='proj sw-ring';
+  let x=G.p1.x+62, y=G.p1.y+30;
+  let size=24, hit=false;
+  el.style.cssText=`top:${y}px;left:${x}px;width:${size}px;height:${size}px;`;
+  gc.appendChild(el);
+  const id=setInterval(()=>{
+    x+=8; size=Math.min(size+2,56);
+    el.style.left=x+'px'; el.style.top=(y-(size-24)/2)+'px';
+    el.style.width=size+'px'; el.style.height=size+'px';
+    if(!hit && x>G.p2.x-8 && x<G.p2.x+FW && (y>G.p2.y) && (y<G.p2.y+FH)){
+      dmg(G.p1,G.p2,p2e,18,'SONIC WAVE',30,'#ff00ff');
+      hit=true; el.remove(); clearInterval(id);
+    }
+    if(x>860){el.remove();clearInterval(id);}
+  },22);
+}
+
+function spawnFencerProj(){
+  // Fencer's aerial blade throw (only from air)
+  const el=document.createElement('div');
+  el.className='proj sw-bar';
+  let x=G.p2.x-10, y=G.p2.y+30;
+  el.style.cssText=`top:${y}px;left:${x}px;width:30px;`;
+  gc.appendChild(el);
+  const id=setInterval(()=>{
+    x-=11; el.style.left=x+'px';
+    if(x>G.p1.x-8&&x<G.p1.x+FW&&y>G.p1.y&&y<G.p1.y+FH){
+      dmg(G.p2,G.p1,p1e,12,'BLADE THROW',0,'#aaaaff'); el.remove(); clearInterval(id);
+    }
+    if(x<-50){el.remove();clearInterval(id);}
+  },28);
+}
+
+function spawnShockwave(x,y){
+  const el=document.createElement('div');
+  el.className='shockwave';
+  el.style.cssText=`left:${x+FW/2}px;top:${y+FH-20}px;`;
+  gc.appendChild(el); setTimeout(()=>el.remove(),400);
+}
+
+// ============================================================
+// P1 ATTACKS
+// ============================================================
+function atk1(t){
+  if(!G.running||G.p1.cd>0) return;
+  const aerial=!G.p1.onGround;
   const M={
-    light:{n:'FLÈCHE LUNGE',d:10,eg:10,cd:25,rng:110},
-    heavy:{n:'ÉPÉE SLAM',d:18,eg:14,cd:50,rng:90,kb:35},
-    special:{n:'EN GARDE COMBO',d:28,eg:20,cd:58,rng:105},
-    super:{n:'OLYMPIC FURY',d:45,ec:100,cd:88,dash:true},
+    light:{n:'HI-HAT JAB',d:aerial?12:8,eg:10,cd:aerial?14:18,rng:95,c:'#ffff00'},
+    heavy:{n:aerial?'BASS DROP':'808 BOOM',d:aerial?26:20,eg:14,cd:aerial?35:45,rng:aerial?120:85,kb:aerial?0:55,c:'#ff6600'},
+    special:{n:'BEATBOX BARRAGE',d:4,hits:5,ec:25,cd:52,c:'#00ffff'},
+    wave:{n:'SONIC WAVE',ec:30,cd:55,c:'#ff00ff'},
+    super:{n:'FREESTYLE BREAK',d:42,ec:100,cd:80,fs:true,c:'#ffffff'},
   }[t];
-  if(!M)return;
-  if(M.ec&&G.p2.en<M.ec)return;
-  if(M.ec)G.p2.en-=M.ec;
+  if(!M) return;
+  if(M.ec&&G.p1.en<M.ec) return;
+  if(M.ec) G.p1.en-=M.ec;
+  G.p1.cd=M.cd;
+  p1e.classList.add(t==='light'?'atk':t==='heavy'?'atk2':'atk');
+  setTimeout(()=>p1e.classList.remove('atk','atk2'),220);
+
+  if(M.fs){flash('#00ffff');ann('FREESTYLE BREAK!!');dmg(G.p1,G.p2,p2e,M.d,M.n,0,M.c);return;}
+  if(t==='special'){spawnBarrage();return;}
+  if(t==='wave'){spawnSoundWave();return;}
+
+  // Bass drop landing shockwave
+  if(aerial && t==='heavy'){
+    const landCheck=setInterval(()=>{
+      if(G.p1.onGround){
+        spawnShockwave(G.p1.x, G.p1.y);
+        flash('#ff6600');
+        const dist=Math.abs(G.p2.x-G.p1.x);
+        if(dist<130) dmg(G.p1,G.p2,p2e,10,'SHOCKWAVE',40,'#ff6600');
+        clearInterval(landCheck);
+      }
+    },50);
+  }
+
+  const dist=G.p2.x-G.p1.x;
+  const rng=M.rng+(aerial?30:0);
+  if(dist>0 && dist<rng){
+    dmg(G.p1,G.p2,p2e,M.d,M.n,M.kb||0,M.c);
+    G.p1.en=Math.min(MEN,G.p1.en+(M.eg||0));
+  }
+}
+
+// ============================================================
+// P2 ATTACKS
+// ============================================================
+function atk2(t){
+  if(!G.running||G.p2.cd>0) return;
+  const aerial=!G.p2.onGround;
+  const M={
+    light:{n:'FLÈCHE LUNGE',d:aerial?14:10,eg:10,cd:25,rng:115},
+    heavy:{n:'ÉPÉE SLAM',d:aerial?22:18,eg:14,cd:50,rng:90,kb:38},
+    special:{n:'EN GARDE COMBO',d:28,eg:20,cd:58,rng:105},
+    bladethrow:{n:'BLADE THROW',cd:45,proj:true},
+    super:{n:'OLYMPIC FURY',d:46,ec:100,cd:88,dash:true},
+  }[t];
+  if(!M) return;
+  if(M.ec&&G.p2.en<M.ec) return;
+  if(M.ec) G.p2.en-=M.ec;
   G.p2.cd=M.cd;
   p2e.classList.add('atk'); setTimeout(()=>p2e.classList.remove('atk','atk2'),220);
   if(M.dash){flash('#ffff00');ann('OLYMPIC FURY!!');dmg(G.p2,G.p1,p1e,M.d,M.n);return;}
+  if(M.proj){spawnFencerProj();return;}
   const dist=G.p2.x-G.p1.x;
-  if(dist<M.rng){dmg(G.p2,G.p1,p1e,M.d,M.n,M.kb||0);G.p2.en=Math.min(MEN,G.p2.en+(M.eg||0));}
+  const rng=M.rng+(aerial?30:0);
+  if(dist>0 && dist<rng){
+    dmg(G.p2,G.p1,p1e,M.d,M.n,M.kb||0,'#aaaaff');
+    G.p2.en=Math.min(MEN,G.p2.en+(M.eg||0));
+  }
 }
 
+// ============================================================
 // AI
+// ============================================================
 function ai(dt){
   const dist=G.p2.x-G.p1.x;
   G.ait-=dt;
+  if(G.p2.cd>0){G.p2.cd-=dt*60;}
+
   if(G.ait<=0){
     const r=Math.random();
     if(G.p2.hp<30&&G.p2.en>=MEN) G.ais='super';
-    else if(dist>160) G.ais='approach';
-    else if(r<.3) G.ais='light';
-    else if(r<.5) G.ais='heavy';
-    else if(r<.65&&G.p2.en>=25) G.ais='special';
-    else if(r<.8) G.ais='block';
+    else if(dist>180) G.ais='approach';
+    else if(r<.28) G.ais='light';
+    else if(r<.46) G.ais='heavy';
+    else if(r<.58&&G.p2.en>=25) G.ais='special';
+    else if(r<.65&&!G.p2.onGround) G.ais='bladethrow';
+    else if(r<.72) G.ais='jump';
+    else if(r<.84) G.ais='block';
     else G.ais='retreat';
-    G.ait=.35+Math.random()*.7;
+    G.aiAgro=Math.random()<0.3;
+    G.ait=(G.aiAgro?0.25:0.5)+Math.random()*0.6;
   }
-  if(G.p2.cd>0){G.p2.cd-=dt*60;return;}
+
+  if(G.p2.cd>0) return;
+
   switch(G.ais){
-    case 'approach': if(dist>100) G.p2.x=cl(G.p2.x-2,SL,SR); G.p2.blk=false; break;
-    case 'retreat': G.p2.x=cl(G.p2.x+2,SL,SR); G.p2.blk=false; break;
-    case 'light': G.p2.blk=false; atk2('light'); break;
-    case 'heavy': G.p2.blk=false; atk2('heavy'); break;
-    case 'special': G.p2.blk=false; atk2('special'); break;
-    case 'super': G.p2.blk=false; atk2('super'); break;
+    case 'approach': G.p2.x=cl(G.p2.x-2,SL,SR); G.p2.blk=false; break;
+    case 'retreat':  G.p2.x=cl(G.p2.x+1.5,SL,SR); G.p2.blk=false; break;
+    case 'light':    G.p2.blk=false; atk2('light'); break;
+    case 'heavy':    G.p2.blk=false; atk2('heavy'); break;
+    case 'special':  G.p2.blk=false; atk2('special'); break;
+    case 'bladethrow': if(!G.p2.onGround){G.p2.blk=false;atk2('bladethrow');} break;
+    case 'jump':     jump(G.p2,p2e); break;
+    case 'super':    G.p2.blk=false; atk2('super'); break;
     case 'block':
       G.p2.blk=true; p2e.classList.add('blk');
       setTimeout(()=>{G.p2.blk=false;p2e.classList.remove('blk');},500); break;
   }
-  G.p2.x=cl(G.p2.x,G.p1.x+72,SR); G.p1.x=cl(G.p1.x,SL,G.p2.x-72);
+
+  // Hard boundary: p2 always right of p1
+  G.p2.x=cl(G.p2.x, G.p1.x+76, SR);
+  G.p1.x=cl(G.p1.x, SL, G.p2.x-76);
 }
 
+// ============================================================
+// PHYSICS
+// ============================================================
+function physics(dt){
+  [G.p1, G.p2].forEach((p,i)=>{
+    if(!p.onGround){
+      p.vy+=GRAVITY;
+      p.y+=p.vy;
+      if(p.y>=GROUND){
+        p.y=GROUND; p.vy=0; p.onGround=true; p.jumped=false;
+        const el=i===0?p1e:p2e;
+        el.classList.remove('jumping');
+      }
+    }
+    p.y=cl(p.y,-50,GROUND);
+  });
+}
+
+// ============================================================
 // INPUT
+// ============================================================
 document.addEventListener('keydown',e=>{
-  G.keys[e.key.toLowerCase()]=true;
-  if(!G.running)return;
   const k=e.key.toLowerCase();
-  if(k==='a') atk1('light');
-  else if(k==='s'){if(G.keys['w'])atk1('super'); else atk1('heavy');}
+  G.keys[k]=true;
+  if(!G.running) return;
+  if(k===' '||k==='arrowup'){jump(G.p1,p1e);}
+  else if(k==='a') atk1('light');
+  else if(k==='s'){ if(G.keys['w']) atk1('super'); else atk1('heavy'); }
   else if(k==='d') atk1('special');
+  else if(k==='f') atk1('wave');
   else if(k==='w'){G.p1.blk=true;p1e.classList.add('blk');}
   e.preventDefault();
 });
@@ -339,21 +578,44 @@ document.addEventListener('keyup',e=>{
   if(e.key.toLowerCase()==='w'){G.p1.blk=false;p1e.classList.remove('blk');}
 });
 
+// ============================================================
+// GAME LOOP
+// ============================================================
 let lt=0;
 function loop(ts){
-  if(!G.running)return;
+  if(!G.running) return;
   const dt=Math.min((ts-lt)/1000,.05); lt=ts;
-  const spd=3;
-  if(G.keys['q']) G.p1.x=cl(G.p1.x-spd,SL,G.p2.x-FW-4);
-  if(G.keys['e']) G.p1.x=cl(G.p1.x+spd,SL,G.p2.x-FW-4);
+
+  // P1 movement
+  const spd=G.p1.onGround?3.5:3;
+  if(G.keys['q']) G.p1.x=cl(G.p1.x-spd,SL,G.p2.x-76);
+  if(G.keys['e']) G.p1.x=cl(G.p1.x+spd,SL,G.p2.x-76);
   if(G.p1.cd>0) G.p1.cd-=dt*60;
+
+  physics(dt);
   ai(dt);
-  // head bob
-  document.getElementById('p1hd').style.transform=`translateY(${Math.sin(ts/200)*2}px)`;
+
+  // Head bob when on ground
+  if(G.p1.onGround) document.getElementById('p1hd').style.transform=`translateY(${Math.sin(ts/200)*1.5}px)`;
+
   hud(); pos();
   G.gl=requestAnimationFrame(loop);
 }
 
+// ============================================================
+// TIMER
+// ============================================================
+function startTimer(){
+  G.timer=RT;
+  G.ti=setInterval(()=>{
+    if(!G.running) return;
+    G.timer--; if(G.timer<=0){G.timer=0;endRound(true);}
+  },1000);
+}
+
+// ============================================================
+// ROUND MANAGEMENT
+// ============================================================
 function startGame(){
   document.getElementById('ss').style.display='none';
   reset(); G.running=true;
@@ -363,26 +625,20 @@ function startGame(){
 }
 
 function reset(){
-  G.p1={hp:MHP,en:0,x:100,blk:false,cd:0};
-  G.p2={hp:MHP,en:0,x:640,blk:false,cd:0};
+  G.p1={hp:MHP,en:0,x:100,y:GROUND,vy:0,onGround:true,blk:false,cd:0,jumped:false};
+  G.p2={hp:MHP,en:0,x:640,y:GROUND,vy:0,onGround:true,blk:false,cd:0,jumped:false};
   G.ais='approach'; G.ait=1;
+  p1e.classList.remove('jumping','blk','hit','atk','atk2');
+  p2e.classList.remove('jumping','blk','hit','atk','atk2');
   hud(); pos();
   document.getElementById('ks').style.display='none';
 }
 
-function startTimer(){
-  G.timer=RT;
-  G.ti=setInterval(()=>{
-    if(!G.running)return;
-    G.timer--; if(G.timer<=0){G.timer=0;endRound(true);}
-  },1000);
-}
-
 function endRound(to=false){
-  if(!G.running)return;
+  if(!G.running) return;
   G.running=false; cancelAnimationFrame(G.gl); clearInterval(G.ti);
   const w=to?(G.p1.hp>=G.p2.hp?1:2):(G.p1.hp<=0?2:1);
-  if(w===1)G.w1++; else G.w2++;
+  if(w===1) G.w1++; else G.w2++;
   updatePips();
   ann(to?'TIME!':'K.O.!');
   setTimeout(()=>{
@@ -396,9 +652,11 @@ function endRound(to=false){
 
 function nextRound(){
   G.round++; rne.textContent=G.round; reset();
-  document.getElementById('ks').style.display='none';
   ann('ROUND '+G.round);
-  setTimeout(()=>{ann('FIGHT!');G.running=true;startTimer();lt=performance.now();requestAnimationFrame(loop);},1500);
+  setTimeout(()=>{
+    ann('FIGHT!'); G.running=true; startTimer();
+    lt=performance.now(); requestAnimationFrame(loop);
+  },1500);
 }
 
 function endGame(){
@@ -414,129 +672,46 @@ function updatePips(){
   }
 }
 
-pos(); hud();
-
 // ============================================================
 // TOUCH CONTROLLER
 // ============================================================
-function createTouchUI(){
-  const ctrl = document.createElement('div');
-  ctrl.id = 'touch-ctrl';
-  ctrl.innerHTML = `
-    <div id="tc-left">
-      <div class="tc-row">
-        <button class="tcb" id="tc-q">◀ MOVE</button>
-        <button class="tcb" id="tc-e">MOVE ▶</button>
-      </div>
-    </div>
-    <div id="tc-right">
-      <div class="tc-row">
-        <button class="tcb atk-btn" id="tc-d">BARRAGE</button>
-        <button class="tcb sup-btn" id="tc-sup">★SUPER</button>
-      </div>
-      <div class="tc-row" style="margin-top:6px">
-        <button class="tcb" id="tc-a">JAB</button>
-        <button class="tcb heavy-btn" id="tc-s">BOOM</button>
-        <button class="tcb blk-btn" id="tc-w">BLOCK</button>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(ctrl);
-
-  function bind(id, key, isBlock){
-    const el = document.getElementById(id);
-    if(!el) return;
-    const press = e => {
-      e.preventDefault(); G.keys[key]=true;
-      if(!G.running) return;
-      if(isBlock){ G.p1.blk=true; p1e.classList.add('blk'); }
-      else if(key==='s'){ if(G.keys['w']) atk1('super'); else atk1('heavy'); }
-      else if(key==='a') atk1('light');
-      else if(key==='d') atk1('special');
-    };
-    const release = e => {
-      e.preventDefault(); G.keys[key]=false;
-      if(isBlock){ G.p1.blk=false; p1e.classList.remove('blk'); }
-    };
-    el.addEventListener('touchstart',press,{passive:false});
-    el.addEventListener('touchend',release,{passive:false});
-    el.addEventListener('mousedown',press);
-    el.addEventListener('mouseup',release);
-  }
-
-  const supEl = document.getElementById('tc-sup');
-  supEl.addEventListener('touchstart',e=>{e.preventDefault();G.keys['w']=true;G.keys['s']=true;if(G.running)atk1('super');},{passive:false});
-  supEl.addEventListener('touchend',e=>{e.preventDefault();G.keys['w']=false;G.keys['s']=false;},{passive:false});
-  supEl.addEventListener('mousedown',e=>{G.keys['w']=true;G.keys['s']=true;if(G.running)atk1('super');});
-  supEl.addEventListener('mouseup',e=>{G.keys['w']=false;G.keys['s']=false;});
-
-  bind('tc-q','q'); bind('tc-e','e');
-  bind('tc-a','a'); bind('tc-s','s');
-  bind('tc-d','d'); bind('tc-w','w',true);
+function bindBtn(id, onDown, onUp){
+  const el=document.getElementById(id); if(!el) return;
+  el.addEventListener('touchstart',e=>{e.preventDefault();onDown();},{passive:false});
+  el.addEventListener('touchend',e=>{e.preventDefault();if(onUp)onUp();},{passive:false});
+  el.addEventListener('mousedown',onDown);
+  if(onUp) el.addEventListener('mouseup',onUp);
 }
-createTouchUI();
 
-// Dynamic scaling for mobile
+bindBtn('tc-jump',()=>{ if(G.running) jump(G.p1,p1e); });
+bindBtn('tc-q',()=>{ G.keys['q']=true; },()=>{ G.keys['q']=false; });
+bindBtn('tc-e',()=>{ G.keys['e']=true; },()=>{ G.keys['e']=false; });
+bindBtn('tc-a',()=>{ if(G.running) atk1('light'); });
+bindBtn('tc-s',()=>{ if(G.running) atk1('heavy'); });
+bindBtn('tc-d',()=>{ if(G.running) atk1('special'); });
+bindBtn('tc-f',()=>{ if(G.running) atk1('wave'); });
+bindBtn('tc-w',()=>{ G.p1.blk=true; p1e.classList.add('blk'); },()=>{ G.p1.blk=false; p1e.classList.remove('blk'); });
+bindBtn('tc-sup',()=>{ if(G.running && G.p1.en>=MEN) atk1('super'); });
+
+// ============================================================
+// MOBILE SCALING
+// ============================================================
 function scaleGame(){
-  const wrap = document.getElementById('game-wrap') || document.body;
-  const gc = document.getElementById('gc');
-  const spacer = document.getElementById('gc-spacer');
-  const avail = Math.min(window.innerWidth, 800);
-  if(avail < 800){
-    const scale = avail / 800;
-    gc.style.transformOrigin = 'top left';
-    gc.style.transform = 'scale('+scale+')';
-    gc.style.width = '800px';
-    gc.style.height = '480px';
-    if(spacer) spacer.style.height = (480*scale)+'px';
-    wrap.style.height = (480*scale)+'px';
+  const wrap=document.getElementById('game-wrap');
+  const avail=Math.min(window.innerWidth,800);
+  if(avail<800){
+    const scale=avail/800;
+    gc.style.transformOrigin='top left';
+    gc.style.transform='scale('+scale+')';
+    wrap.style.height=(480*scale)+'px';
   } else {
-    gc.style.transform = '';
-    if(spacer) spacer.style.height = '0';
+    gc.style.transform=''; wrap.style.height='480px';
   }
 }
 scaleGame();
-window.addEventListener('resize', scaleGame);
+window.addEventListener('resize',scaleGame);
 
-
+pos(); hud();
 </script>
-
-<style>
-#touch-ctrl {
-  display:none; width:100%; max-width:800px;
-  padding:10px 8px; background:#0a0a0f;
-  justify-content:space-between; align-items:flex-end;
-  gap:10px; touch-action:none; user-select:none;
-}
-#tc-left,#tc-right{display:flex;flex-direction:column;gap:6px;}
-.tc-row{display:flex;gap:6px;}
-.tcb{
-  font-family:'Press Start 2P',monospace; font-size:8px;
-  padding:14px 10px; background:#1a1a2e; color:#fff;
-  border:2px solid #ff00ff; border-radius:4px; cursor:pointer;
-  box-shadow:0 0 6px #ff00ff66; -webkit-tap-highlight-color:transparent;
-  min-width:50px; text-align:center;
-}
-.tcb:active{background:#ff00ff;color:#000;}
-.atk-btn{border-color:#00ffff;box-shadow:0 0 6px #00ffff66;font-size:7px;}
-.atk-btn:active{background:#00ffff;color:#000;}
-.heavy-btn{border-color:#ff6600;box-shadow:0 0 6px #ff660066;}
-.heavy-btn:active{background:#ff6600;color:#000;}
-.blk-btn{border-color:#00ff44;box-shadow:0 0 6px #00ff4466;}
-.blk-btn:active{background:#00ff44;color:#000;}
-.sup-btn{border-color:#ffff00;box-shadow:0 0 6px #ffff0066;font-size:7px;}
-.sup-btn:active{background:#ffff00;color:#000;}
-@media(max-width:820px){
-  body{justify-content:flex-start;padding-top:0;align-items:flex-start;}
-  #game-wrap{width:100vw;overflow:hidden;}
-  .ovl h1{font-size:11px!important;}
-  .ovl h2{font-size:8px!important;}
-  .ovl p{font-size:5px!important;}
-  .btn{font-size:7px!important;padding:10px 14px!important;}
-  #touch-ctrl{display:flex!important;}
-  #ctrl{display:none;}
-}
-</style>
-
 </body>
 </html>
